@@ -14,10 +14,10 @@
 
 import os
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, ExecuteProcess, IncludeLaunchDescription
+from launch.actions import DeclareLaunchArgument, ExecuteProcess, IncludeLaunchDescription, GroupAction
 from launch.substitutions import LaunchConfiguration, Command, PathJoinSubstitution
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch_ros.actions import Node
+from launch_ros.actions import Node, PushRosNamespace
 from launch_ros.substitutions import FindPackageShare
 
 
@@ -51,7 +51,8 @@ def generate_launch_description():
             cmd=['gazebo', '--verbose', '-s', 'libgazebo_ros_factory.so',  '-s', 'libgazebo_ros_init.so', LaunchConfiguration('world')],
             output='screen'
         ),
-
+        GroupAction([
+        PushRosNamespace('polybot04'),
         Node(
             package='gazebo_ros',
             executable='spawn_entity.py',
@@ -77,7 +78,7 @@ def generate_launch_description():
             ],
             remappings=[("odometry/filtered", "odom")]
         ),
-
+        ]),
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(description_launch_path),
             launch_arguments={
@@ -86,9 +87,6 @@ def generate_launch_description():
             }.items()
         ),
 
-        IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(joy_launch_path),
-        )
     ])
 
 #sources: 

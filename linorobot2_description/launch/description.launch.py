@@ -14,10 +14,10 @@
 
 import os
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument
+from launch.actions import DeclareLaunchArgument, GroupAction
 from launch.substitutions import LaunchConfiguration, Command, PathJoinSubstitution, EnvironmentVariable
 from launch.conditions import IfCondition
-from launch_ros.actions import Node
+from launch_ros.actions import Node, PushRosNamespace
 from launch_ros.substitutions import FindPackageShare
 
 
@@ -56,17 +56,18 @@ def generate_launch_description():
             default_value='false',
             description='Use simulation time'
         ),
-
+        GroupAction([
+            PushRosNamespace('polybot04'),
         Node(
             package='joint_state_publisher',
             executable='joint_state_publisher',
             name='joint_state_publisher',
-            condition=IfCondition(LaunchConfiguration("publish_joints"))
-            # parameters=[
-            #     {'use_sim_time': LaunchConfiguration('use_sim_time')}
-            # ] #since galactic use_sim_time gets passed somewhere and rejects this when defined from launch file
+            condition=IfCondition(LaunchConfiguration("publish_joints")),
+            parameters=[
+                {'use_sim_time': LaunchConfiguration('use_sim_time')}
+            ] #since galactic use_sim_time gets passed somewhere and rejects this when defined from launch file
         ),
-
+        
         Node(
             package='robot_state_publisher',
             executable='robot_state_publisher',
@@ -79,6 +80,7 @@ def generate_launch_description():
                 }
             ]
         ),
+        ])
 
         Node(
             package='rviz2',

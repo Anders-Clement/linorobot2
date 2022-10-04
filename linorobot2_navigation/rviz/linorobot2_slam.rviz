@@ -105,7 +105,7 @@ Visualization Manager:
         Durability Policy: Volatile
         History Policy: Keep Last
         Reliability Policy: Reliable
-        Value: /robot_description
+        Value: /polybot04/robot_description
       Enabled: true
       Links:
         All Links Enabled: true
@@ -157,7 +157,7 @@ Visualization Manager:
           Show Trail: false
           Value: true
       Name: RobotModel
-      TF Prefix: ""
+      TF Prefix: "polybot04"
       Update Interval: 0
       Value: true
       Visual Enabled: true
