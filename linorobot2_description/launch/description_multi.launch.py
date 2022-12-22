@@ -71,7 +71,7 @@ def generate_launch_description():
             package='robot_state_publisher',
             executable='robot_state_publisher',
             name='robot_state_publisher',
-            node_namespace='polybot04',
+            namespace='polybot04',
             output='screen',
             parameters=[
                 {
