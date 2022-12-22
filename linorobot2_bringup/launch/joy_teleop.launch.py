@@ -39,7 +39,7 @@ def generate_launch_description():
             package='teleop_twist_joy',
             executable='teleop_node',
             name='teleop_twist_joy_node',
-            namespace='polybot04',
+            #namespace='polybot04',
             output='screen',
             parameters=[joy_config_path]
         )
