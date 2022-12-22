@@ -41,6 +41,7 @@ def generate_launch_description():
             name='teleop_twist_joy_node',
             namespace='polybot04',
             output='screen',
-            parameters=[joy_config_path]
+            parameters=[joy_config_path],
+            arguments=["--ros-args", "--remap", "/cmd_vel:=/polybot04/cmd_vel"]
         )
     ])
