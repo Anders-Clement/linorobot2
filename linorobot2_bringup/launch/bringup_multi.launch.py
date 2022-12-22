@@ -64,6 +64,7 @@ def generate_launch_description():
             executable='ekf_node',
             name='ekf_filter_node',
             output='screen',
+            namespace='polybot04',
             parameters=[
                 ekf_config_path
             ],
