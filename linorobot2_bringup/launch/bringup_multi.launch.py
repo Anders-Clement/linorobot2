@@ -31,7 +31,7 @@ def generate_launch_description():
     )
 
     description_launch_path = PathJoinSubstitution(
-        [FindPackageShare('linorobot2_description'), 'launch', 'description.launch_multi.py']
+        [FindPackageShare('linorobot2_description'), 'launch', 'description_multi.launch.py']
     )
 
     ekf_config_path = PathJoinSubstitution(
