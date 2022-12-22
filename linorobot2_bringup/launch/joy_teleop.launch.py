@@ -31,8 +31,9 @@ def generate_launch_description():
             package='joy_linux',
             executable='joy_linux_node',
             name='joy_linux_node',
-            namespace='polybot04',
+            #namespace='polybot04',
             output='screen',
+            remappings=[("joy", "polybot04/joy")]
         ),
 
         Node(
