@@ -43,6 +43,6 @@ def generate_launch_description():
             #namespace='polybot04',
             output='screen',
             parameters=[joy_config_path],
-            remappings=[("cmd_vel", "polybot04/cmd_vel"), ("joy", "polybot04/joy")]
+            remappings=[("cmd_vel", "polybot04/cmd_vel"), ("input/joy", "polybot04/joy")]
         )
     ])
