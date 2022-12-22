@@ -61,6 +61,7 @@ def generate_launch_description():
             package='joint_state_publisher',
             executable='joint_state_publisher',
             name='joint_state_publisher',
+            namespace='polybot04',
             condition=IfCondition(LaunchConfiguration("publish_joints"))
             # parameters=[
             #     {'use_sim_time': LaunchConfiguration('use_sim_time')}
