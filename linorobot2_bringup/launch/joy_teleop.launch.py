@@ -36,7 +36,7 @@ def generate_launch_description():
             name='joy_linux_node',
             #namespace='polybot04',
             output='screen',
-            remappings=[("joy", f"{robot_id}/joy"), ("joy/feedback", f"{robot_id}/joy/feedback")] # This shit works
+            remappings=[("joy", f"{robot_id}/joy"), ("joy/set_feedback", f"{robot_id}/joy/set_feedback")] # This shit works
         ),
 
         Node(
