@@ -87,7 +87,6 @@ def generate_launch_description():
         
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(rplidar2_launch_path),
-            remappings=[('scan', f"{robot_id}/scan")],
         ),
         
         Node( 
