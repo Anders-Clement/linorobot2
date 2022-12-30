@@ -22,6 +22,9 @@ from launch_ros.actions import Node
 
 
 def generate_launch_description():
+    
+    robot_id = os.getenv('ROBOT_ID')
+    
     joy_config_path = PathJoinSubstitution(
         [FindPackageShare("linorobot2_bringup"), "config", "joy.yaml"]
     )
@@ -33,7 +36,7 @@ def generate_launch_description():
             name='joy_linux_node',
             #namespace='polybot04',
             output='screen',
-            remappings=[("joy", "polybot04/joy"), ("joy/feedback", "polybot04/joy/feedback")]
+            remappings=[("joy", robot_id+"/joy"), ("joy/feedback", robot_id+"/joy/feedback")] # This shit works
         ),
 
         Node(
@@ -43,6 +46,6 @@ def generate_launch_description():
             #namespace='polybot04',
             output='screen',
             parameters=[joy_config_path],
-            remappings=[("cmd_vel", "polybot04/cmd_vel"), ("joy", "polybot04/joy")]
+            remappings=[("cmd_vel", robot_id+"/cmd_vel"), ("joy", robot_id+"/joy")] # This shit works
         )
     ])
