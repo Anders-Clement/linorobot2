@@ -45,7 +45,7 @@ def generate_launch_description():
     }
 
     laser_launch_path = PathJoinSubstitution(
-        [FindPackageShare('linorobot2_bringup'), 'launch', 'lasers.launch.py']
+        [FindPackageShare('linorobot2_bringup'), 'launch', 'lasers_multi.launch.py']
     )
 
     depth_launch_path = PathJoinSubstitution(
