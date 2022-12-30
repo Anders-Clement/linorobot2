@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution, PythonExpression
@@ -22,6 +23,7 @@ from launch.conditions import IfCondition
 
 
 def generate_launch_description():
+    robot_id = os.getenv('ROBOT_ID')
     sensors_launch_path = PathJoinSubstitution(
         [FindPackageShare('linorobot2_bringup'), 'launch', 'sensors.launch.py']
     )
@@ -39,6 +41,7 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
+        
         DeclareLaunchArgument(
             name='base_serial_port', 
             default_value='/dev/ttyACM0',
@@ -64,7 +67,7 @@ def generate_launch_description():
             executable='ekf_node',
             name='ekf_filter_node',
             output='screen',
-            namespace='polybot04',
+            namespace=str(robot_id),
             parameters=[
                 ekf_config_path
             ],
