@@ -14,10 +14,10 @@
 
 import os
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument
+from launch.actions import DeclareLaunchArgument, GroupAction
 from launch.substitutions import LaunchConfiguration, Command, PathJoinSubstitution, EnvironmentVariable
 from launch.conditions import IfCondition
-from launch_ros.actions import Node
+from launch_ros.actions import Node, PushRosNamespace
 from launch_ros.substitutions import FindPackageShare
 
 
@@ -34,12 +34,14 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
-        DeclareLaunchArgument(
-            name='urdf', 
-            default_value=urdf_path,
-            namespace=str(robot_id),
-            description='URDF path'
-        ),
+        GroupAction([
+            PushRosNamespace(robot_id),
+            DeclareLaunchArgument(
+                name='urdf', 
+                default_value=urdf_path,
+                description='URDF path'
+            )
+        ]),
         
         DeclareLaunchArgument(
             name='publish_joints', 
