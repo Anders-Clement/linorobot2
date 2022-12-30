@@ -34,14 +34,11 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
-        GroupAction([
-            PushRosNamespace(robot_id),
-            DeclareLaunchArgument(
-                name='urdf', 
-                default_value=urdf_path,
-                description='URDF path'
-            )
-        ]),
+        DeclareLaunchArgument(
+            name='urdf', 
+            default_value=urdf_path,
+            description='URDF path'
+        ),
         
         DeclareLaunchArgument(
             name='publish_joints', 
