@@ -37,6 +37,7 @@ def generate_launch_description():
         DeclareLaunchArgument(
             name='urdf', 
             default_value=urdf_path,
+            namespace=str(robot_id),
             description='URDF path'
         ),
         
