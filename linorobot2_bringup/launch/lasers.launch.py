@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
@@ -21,6 +22,8 @@ from launch_ros.actions import Node
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 def generate_launch_description():
+    
+    robot_id = os.getenv('ROBOT_ID')
     ydlidar_config_path = PathJoinSubstitution(
         [FindPackageShare("linorobot2_bringup"), "config", "ydlidar.yaml"]
     )
@@ -83,7 +86,8 @@ def generate_launch_description():
         
         
         IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(rplidar2_launch_path)
+            PythonLaunchDescriptionSource(rplidar2_launch_path),
+            remappings=[('scan', f"{robot_id}/scan")],
         ),
         
         Node( 
