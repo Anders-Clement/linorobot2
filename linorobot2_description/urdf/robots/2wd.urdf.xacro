@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <robot name="polybot" xmlns:xacro="http://ros.org/wiki/xacro">
 
-  <xacro:arg name="robot_name" default="polybot" /> 
+  <xacro:arg name=" robot_name" default="polybot" /> 
   <xacro:include filename="$(find linorobot2_description)/urdf/2wd_properties.urdf.xacro" />
   <xacro:include filename="$(find linorobot2_description)/urdf/mech/base.urdf.xacro" />
   <xacro:include filename="$(find linorobot2_description)/urdf/mech/layer2.urdf.xacro" />
