@@ -64,7 +64,7 @@ def generate_launch_description():
             }.items(),
             remappings=[("slam_toolbox/feedback", "polybot04/slam_toolbox/feedback"), 
                         ("slam_toolbox/graph_visualization", "polybot04/slam_toolbox/graph_visualization"),
-                        ("slam_toolbox/scan_visualization", "polybot04/slam_toolbox/scan_visualization")
+                        ("slam_toolbox/scan_visualization", "polybot04/slam_toolbox/scan_visualization"),
                         ("slam_toolbox/update", "polybot04/slam_toolbox/update")]
         ),
 
