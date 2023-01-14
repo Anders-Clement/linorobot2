@@ -57,6 +57,12 @@ def generate_launch_description():
             default_value='false',
             description='Use simulation time'
         ),
+        
+        DeclareLaunchArgument(
+            name= 'robot_id',
+            default_value= str(robot_id),
+            description='Robot ID'
+        ),
 
         Node(
             package='joint_state_publisher',
@@ -78,7 +84,7 @@ def generate_launch_description():
             parameters=[
                 {   'frame_prefix': str(robot_id) + '/',
                     'use_sim_time': LaunchConfiguration('use_sim_time'),
-                    'robot_description': Command(['xacro ', LaunchConfiguration('urdf'), ' robot_name:=', str(robot_id)])
+                    'robot_description': Command(['xacro ', LaunchConfiguration('urdf'), ' robot_name:=', LaunchConfiguration('robot_id')])
                 }
             ]
         ),
