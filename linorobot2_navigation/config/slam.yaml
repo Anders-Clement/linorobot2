@@ -12,7 +12,7 @@ slam_toolbox:
     # ROS Parameters
     odom_frame: polybot04/odom
     map_frame: map
-    base_frame: polybot/base_footprint
+    base_frame: polybot04/base_footprint
     scan_topic: polybot04/scan
     mode: mapping #localization
 
