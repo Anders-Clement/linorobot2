@@ -69,7 +69,13 @@ def generate_launch_description():
             executable='joint_state_publisher',
             name='joint_state_publisher',
             namespace=str(robot_id),
-            condition=IfCondition(LaunchConfiguration("publish_joints"))
+            condition=IfCondition(LaunchConfiguration("publish_joints")),
+                        parameters=[
+                {   'frame_prefix': str(robot_id) + '/',
+                    'use_sim_time': LaunchConfiguration('use_sim_time'),
+                    'robot_description': Command(['xacro ', LaunchConfiguration('urdf'), ' robot_name:=', LaunchConfiguration('robot_id')])
+                }
+            ]
             # parameters=[
             #     {'use_sim_time': LaunchConfiguration('use_sim_time')}
             # ] #since galactic use_sim_time gets passed somewhere and rejects this when defined from launch file
