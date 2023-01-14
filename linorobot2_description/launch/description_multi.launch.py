@@ -60,7 +60,7 @@ def generate_launch_description():
         
         DeclareLaunchArgument(
             name= 'robot_id',
-            default_value= str(robot_id),
+            default_value= robot_id,
             description='Robot ID'
         ),
 
