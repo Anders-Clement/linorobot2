@@ -1,8 +1,6 @@
 ekf_filter_node:
     ros__parameters:
         frequency: 50.0
-        transform_time_offset: 0.1
-        transform_timeout: 0.1
         two_d_mode: true
         publish_tf: true
         debug: true
@@ -17,14 +15,14 @@ ekf_filter_node:
         #vx    , vy    , vz,
         #vroll , vpitch, vyaw,
         #ax    , ay    , az
-        odom0: polybot04/odom/unfiltered
+        odom0: odom/unfiltered
         odom0_config: [false, false, false,
                        false, false, false,
                        true, true, false,
                        false, false, false,
                        false, false, false]
 
-        imu0: polybot04/imu/data
+        imu0: imu/data
         imu0_config: [false, false, false,
                       false, false, false,
                       true, true, false,

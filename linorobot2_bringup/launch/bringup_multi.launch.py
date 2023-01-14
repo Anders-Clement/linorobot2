@@ -66,7 +66,6 @@ def generate_launch_description():
             package='robot_localization',
             executable='ekf_node',
             name='ekf_filter_node',
-            namespace='polybot04',
             output='screen',
             parameters=[
                 ekf_config_path
