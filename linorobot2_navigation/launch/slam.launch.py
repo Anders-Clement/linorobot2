@@ -61,7 +61,11 @@ def generate_launch_description():
             launch_arguments={
                 'use_sim_time': LaunchConfiguration("sim"),
                 slam_param_name: slam_config_path
-            }.items()
+            }.items(),
+            remappings=[("slam_toolbox/feedback", "polybot04/slam_toolbox/feedback"), 
+                        ("slam_toolbox/graph_visualization", "polybot04/slam_toolbox/graph_visualization"),
+                        ("slam_toolbox/scan_visualization", "polybot04/slam_toolbox/scan_visualization")
+                        ("slam_toolbox/update", "polybot04/slam_toolbox/update")]
         ),
 
         Node(
