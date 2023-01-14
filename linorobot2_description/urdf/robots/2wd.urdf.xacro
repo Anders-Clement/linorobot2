@@ -80,6 +80,6 @@
     wheel_separation="${wheel_pos_y * 2}"
     wheel_radius="${wheel_radius}"
     wheel_torque="${wheel_torque}"
-    robot_name="${robot_name}"
+    robot_name= "polybot04"
   />
 </robot>
