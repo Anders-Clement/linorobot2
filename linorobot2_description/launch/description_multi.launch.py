@@ -65,6 +65,20 @@ def generate_launch_description():
         ),
 
         Node(
+            package='robot_state_publisher',
+            executable='robot_state_publisher',
+            name='robot_state_publisher',
+            namespace=str(robot_id),
+            output='screen',
+            parameters=[
+                {   'frame_prefix': str(robot_id) + '/',
+                    'use_sim_time': LaunchConfiguration('use_sim_time'),
+                    'robot_description': Command(['xacro ', LaunchConfiguration('urdf'), ' robot_name:=', LaunchConfiguration('robot_id')])
+                }
+            ]
+        ),
+        
+        Node(
             package='joint_state_publisher',
             executable='joint_state_publisher',
             name='joint_state_publisher',
@@ -79,20 +93,6 @@ def generate_launch_description():
             # parameters=[
             #     {'use_sim_time': LaunchConfiguration('use_sim_time')}
             # ] #since galactic use_sim_time gets passed somewhere and rejects this when defined from launch file
-        ),
-
-        Node(
-            package='robot_state_publisher',
-            executable='robot_state_publisher',
-            name='robot_state_publisher',
-            namespace=str(robot_id),
-            output='screen',
-            parameters=[
-                {   'frame_prefix': str(robot_id) + '/',
-                    'use_sim_time': LaunchConfiguration('use_sim_time'),
-                    'robot_description': Command(['xacro ', LaunchConfiguration('urdf'), ' robot_name:=', LaunchConfiguration('robot_id')])
-                }
-            ]
         ),
 
         Node(
