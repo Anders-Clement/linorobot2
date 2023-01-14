@@ -6,7 +6,7 @@ ekf_filter_node:
         two_d_mode: true
         publish_tf: true
         debug: true
-        debug_out_file: ~/debug_ekf.txt
+        debug_out_file: /home/ubuntu/debug_ekf.txt
         map_frame: map             
         odom_frame: polybot04/odom            
         base_link_frame: polybot04/base_footprint 
