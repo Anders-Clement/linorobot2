@@ -59,13 +59,10 @@ def generate_launch_description():
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(slam_launch_path),
             launch_arguments={
+                'namespace': "polybot04",
                 'use_sim_time': LaunchConfiguration("sim"),
                 slam_param_name: slam_config_path
             }.items(),
-            remappings=[("slam_toolbox/feedback", "polybot04/slam_toolbox/feedback"), 
-                        ("slam_toolbox/graph_visualization", "polybot04/slam_toolbox/graph_visualization"),
-                        ("slam_toolbox/scan_visualization", "polybot04/slam_toolbox/scan_visualization"),
-                        ("slam_toolbox/update", "polybot04/slam_toolbox/update")]
         ),
 
         Node(
