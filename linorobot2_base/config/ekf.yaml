@@ -8,9 +8,9 @@ ekf_filter_node:
         debug: true
         debug_out_file: /home/ubuntu/debug_ekf.txt
         map_frame: map             
-        odom_frame: odom            
+        odom_frame: polybot04/odom            
         base_link_frame: polybot04/base_footprint 
-        world_frame: odom 
+        world_frame: polybot04/odom 
 
         #x     , y     , z,
         #roll  , pitch , yaw,
