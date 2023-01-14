@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
-<robot name="polybot04" xmlns:xacro="http://ros.org/wiki/xacro">
+<robot name="polybot" xmlns:xacro="http://ros.org/wiki/xacro">
 
+  <xacro:arg name="robot_name" default="polybot" /> 
   <xacro:include filename="$(find linorobot2_description)/urdf/2wd_properties.urdf.xacro" />
   <xacro:include filename="$(find linorobot2_description)/urdf/mech/base.urdf.xacro" />
   <xacro:include filename="$(find linorobot2_description)/urdf/mech/layer2.urdf.xacro" />
@@ -19,6 +20,7 @@
     mass="${base_mass}"
     wheel_radius="${wheel_radius}"
     wheel_pos_z="${wheel_pos_z}"
+    robot_name="${robot_name}"
 />
 
   <xacro:layer2/>
@@ -79,5 +81,6 @@
     wheel_separation="${wheel_pos_y * 2}"
     wheel_radius="${wheel_radius}"
     wheel_torque="${wheel_torque}"
+    robot_name="${robot_name}"
   />
 </robot>

@@ -76,9 +76,9 @@ def generate_launch_description():
             namespace=str(robot_id),
             output='screen',
             parameters=[
-                {
+                {   'frame_prefix': str(robot_id) + '/',
                     'use_sim_time': LaunchConfiguration('use_sim_time'),
-                    'robot_description': Command(['xacro ', LaunchConfiguration('urdf')])
+                    'robot_description': Command(['xacro ', LaunchConfiguration('urdf'), 'robot_name:=', str(robot_id)])
                 }
             ]
         ),
