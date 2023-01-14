@@ -67,7 +67,6 @@ def generate_launch_description():
             executable='ekf_node',
             name='ekf_filter_node',
             output='screen',
-            namespace=str(robot_id),
             parameters=[
                 ekf_config_path
             ],
