@@ -67,13 +67,14 @@
         </ray>
         <plugin name="${frame_id}_gazebo_ros_head_hokuyo_controller" filename="libgazebo_ros_ray_sensor.so">
           <ros>
+            <namespace>${robot_name}/</namespace>
             <remapping>~/out:=${topic_name}</remapping>                                                                                                                           
           </ros>
           <output_type>sensor_msgs/LaserScan</output_type>
           <alwaysOn>true</alwaysOn>
           <updateRate>${update_rate}</updateRate>
           <topicName>${topic_name}</topicName>
-          <frame_name>${frame_id}</frame_name>
+          <frame_name>${robot_name}/${frame_id}</frame_name>
           <output_type>sensor_msgs/LaserScan</output_type>
         </plugin>
       </sensor>
