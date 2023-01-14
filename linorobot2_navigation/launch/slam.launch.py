@@ -59,7 +59,6 @@ def generate_launch_description():
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(slam_launch_path),
             launch_arguments={
-                'namespace': "polybot04",
                 'use_sim_time': LaunchConfiguration("sim"),
                 slam_param_name: slam_config_path
             }.items(),
