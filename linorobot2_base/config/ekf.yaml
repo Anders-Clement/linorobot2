@@ -1,9 +1,12 @@
 ekf_filter_node:
     ros__parameters:
         frequency: 50.0
+        transform_time_offset: 0.1
+        transform_timeout: 0.1
         two_d_mode: true
         publish_tf: true
- 
+        debug: true
+        debug_out_file: ~/debug_ekf.txt
         map_frame: map             
         odom_frame: polybot04/odom            
         base_link_frame: polybot04/base_footprint 
