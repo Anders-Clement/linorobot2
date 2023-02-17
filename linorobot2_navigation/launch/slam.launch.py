@@ -22,13 +22,10 @@ from launch.conditions import IfCondition
 from launch.substitutions import EnvironmentVariable
 from launch_ros.substitutions import FindPackageShare
 from launch_ros.actions import Node
+from nav2_common.launch import RewrittenYaml
 
 
 def generate_launch_description():
-    slam_launch_path = PathJoinSubstitution(
-        [FindPackageShare('slam_toolbox'), 'launch', 'online_async_launch.py']
-    )
-
     slam_config_path = PathJoinSubstitution(
         [FindPackageShare('linorobot2_navigation'), 'config', 'slam.yaml']
     )
@@ -37,11 +34,38 @@ def generate_launch_description():
         [FindPackageShare('linorobot2_navigation'), 'rviz', 'linorobot2_slam.rviz']
     )
     
-    lc = LaunchContext()
-    ros_distro = EnvironmentVariable('ROS_DISTRO')
-    slam_param_name = 'slam_params_file'
-    if ros_distro.perform(lc) == 'foxy': 
-        slam_param_name = 'params_file'
+    # lc = LaunchContext()
+    # ros_distro = EnvironmentVariable('ROS_DISTRO')
+    # slam_param_name = 'slam_params_file'
+    # if ros_distro.perform(lc) == 'foxy': 
+    #     slam_param_name = 'params_file'
+
+    robot_ns = os.getenv('ROBOT_NAMESPACE')
+    if robot_ns is None:
+        robot_ns = ""
+
+    if robot_ns != "":
+        remappings = [
+            ('/tf', '/'+robot_ns + '/tf'),
+            ('/tf_static', '/'+robot_ns + '/tf_static'),
+            ('/scan', '/' + robot_ns + '/scan'),
+            ('/map', '/' + robot_ns + '/map'),
+            ('/map_metadata', '/' + robot_ns + '/map_metadata')
+        ]
+        slam_param_substitutions = {
+            'map_frame': robot_ns + '_map',
+            'odom_frame': robot_ns + '_odom',
+            'base_frame': robot_ns + '_base_footprint'
+            }
+
+        slam_config = RewrittenYaml(
+                source_file=slam_config_path,
+                root_key=robot_ns,
+                param_rewrites=slam_param_substitutions,
+                convert_types=True)
+    else:
+        slam_config = slam_config_path
+        remappings=[]
 
     return LaunchDescription([
         DeclareLaunchArgument(
@@ -55,13 +79,16 @@ def generate_launch_description():
             default_value='false',
             description='Run rviz'
         ),
-
-        IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(slam_launch_path),
-            launch_arguments={
-                'use_sim_time': LaunchConfiguration("sim"),
-                slam_param_name: slam_config_path
-            }.items()
+        Node(
+            parameters=[
+                slam_config,
+                {'use_sim_time': LaunchConfiguration("sim")}
+            ],
+            package='slam_toolbox',
+            executable='async_slam_toolbox_node',
+            name='slam_toolbox',
+            output='screen',
+            remappings=remappings
         ),
 
         Node(
@@ -74,3 +101,36 @@ def generate_launch_description():
             parameters=[{'use_sim_time': LaunchConfiguration("sim")}]
         )
     ])
+
+
+# def generate_launch_description():
+#     use_sim_time = LaunchConfiguration('use_sim_time')
+#     slam_params_file = LaunchConfiguration('slam_params_file')
+
+#     declare_use_sim_time_argument = DeclareLaunchArgument(
+#         'use_sim_time',
+#         default_value='true',
+#         description='Use simulation/Gazebo clock')
+#     declare_slam_params_file_cmd = DeclareLaunchArgument(
+#         'slam_params_file',
+#         default_value=os.path.join(get_package_share_directory("slam_toolbox"),
+#                                    'config', 'mapper_params_online_async.yaml'),
+#         description='Full path to the ROS2 parameters file to use for the slam_toolbox node')
+
+#     start_async_slam_toolbox_node = Node(
+#         parameters=[
+#           slam_params_file,
+#           {'use_sim_time': use_sim_time}
+#         ],
+#         package='slam_toolbox',
+#         executable='async_slam_toolbox_node',
+#         name='slam_toolbox',
+#         output='screen')
+
+#     ld = LaunchDescription()
+
+#     ld.add_action(declare_use_sim_time_argument)
+#     ld.add_action(declare_slam_params_file_cmd)
+#     ld.add_action(start_async_slam_toolbox_node)
+
+#     return ld

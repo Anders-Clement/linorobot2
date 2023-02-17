@@ -12,7 +12,7 @@
     </link>
 
     <joint name="${namespace + '_base_to_layer2'}" type="fixed">
-      <parent link="${namespace+'_footprint'}"/>
+      <parent link="${namespace+'_base_footprint'}"/>
       <child link="${namespace + '_layer_2'}"/>
       <origin xyz="0 0 ${(wheel_radius - wheel_pos_z)+0.07}" rpy="0 0 0"/>
     </joint>

@@ -52,11 +52,23 @@ def generate_launch_description():
         [FindPackageShare('linorobot2_bringup'), 'launch', 'depth.launch.py']
     )
 
+    robot_ns = os.getenv('ROBOT_NAMESPACE')
+    if robot_ns is not None:
+        laser_arguments = {
+                'sensor': laser_sensor_name,
+                'frame_id': robot_ns + '_laser'
+                }.items()
+    else:
+        laser_arguments = {
+                'sensor': laser_sensor_name,
+                'frame_id': 'laser'
+                }.items()   
+
     return LaunchDescription([
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(laser_launch_path),
             condition=IfCondition(PythonExpression(['"" != "', laser_sensor_name, '"'])),
-            launch_arguments={'sensor': laser_sensor_name}.items()   
+            launch_arguments=laser_arguments
         ),
 
         IncludeLaunchDescription(
