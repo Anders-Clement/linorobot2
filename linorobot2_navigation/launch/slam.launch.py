@@ -23,7 +23,8 @@ from launch.substitutions import EnvironmentVariable
 from launch_ros.substitutions import FindPackageShare
 from launch_ros.actions import Node
 from nav2_common.launch import RewrittenYaml
-
+from launch.actions import GroupAction
+from launch_ros.actions import PushRosNamespace
 
 def generate_launch_description():
     slam_config_path = PathJoinSubstitution(
@@ -46,91 +47,83 @@ def generate_launch_description():
 
     if robot_ns != "":
         remappings = [
-            ('/tf', '/'+robot_ns + '/tf'),
-            ('/tf_static', '/'+robot_ns + '/tf_static'),
-            ('/scan', '/' + robot_ns + '/scan'),
-            ('/map', '/' + robot_ns + '/map'),
-            ('/map_metadata', '/' + robot_ns + '/map_metadata')
+            ('/tf', 'tf'),
+            ('/tf_static', 'tf_static'),
+            ('/scan', 'scan'),
+            ('/map', 'map'),
+            ('/map_metadata', 'map_metadata')
         ]
-        slam_param_substitutions = {
-            'map_frame': robot_ns + '_map',
-            'odom_frame': robot_ns + '_odom',
-            'base_frame': robot_ns + '_base_footprint'
-            }
+        slam_param_substitutions = {}
 
         slam_config = RewrittenYaml(
                 source_file=slam_config_path,
                 root_key=robot_ns,
                 param_rewrites=slam_param_substitutions,
                 convert_types=True)
+        ns_slam=GroupAction(actions=[
+            PushRosNamespace(robot_ns),
+            Node(
+                parameters=[
+                    slam_config,
+                    {'use_sim_time': LaunchConfiguration("sim")}
+                ],
+                package='slam_toolbox',
+                executable='async_slam_toolbox_node',
+                name='slam_toolbox',
+                output='screen',
+                remappings=remappings
+            )
+        ])
+        return LaunchDescription(
+            [
+                DeclareLaunchArgument(
+                    name='sim', 
+                    default_value='false',
+                    description='Enable use_sime_time to true'
+                ),
+
+                DeclareLaunchArgument(
+                    name='rviz', 
+                    default_value='false',
+                    description='Run rviz'
+                ),
+                ns_slam
+            ])
     else:
         slam_config = slam_config_path
         remappings=[]
 
-    return LaunchDescription([
-        DeclareLaunchArgument(
-            name='sim', 
-            default_value='false',
-            description='Enable use_sime_time to true'
-        ),
+        return LaunchDescription([
+            DeclareLaunchArgument(
+                name='sim', 
+                default_value='false',
+                description='Enable use_sime_time to true'
+            ),
 
-        DeclareLaunchArgument(
-            name='rviz', 
-            default_value='false',
-            description='Run rviz'
-        ),
-        Node(
-            parameters=[
-                slam_config,
-                {'use_sim_time': LaunchConfiguration("sim")}
-            ],
-            package='slam_toolbox',
-            executable='async_slam_toolbox_node',
-            name='slam_toolbox',
-            output='screen',
-            remappings=remappings
-        ),
+            DeclareLaunchArgument(
+                name='rviz', 
+                default_value='false',
+                description='Run rviz'
+            ),
+            Node(
+                parameters=[
+                    slam_config,
+                    {'use_sim_time': LaunchConfiguration("sim")}
+                ],
+                package='slam_toolbox',
+                executable='async_slam_toolbox_node',
+                name='slam_toolbox',
+                output='screen',
+                remappings=remappings
+            ),
 
-        Node(
-            package='rviz2',
-            executable='rviz2',
-            name='rviz2',
-            output='screen',
-            arguments=['-d', rviz_config_path],
-            condition=IfCondition(LaunchConfiguration("rviz")),
-            parameters=[{'use_sim_time': LaunchConfiguration("sim")}]
-        )
-    ])
-
-
-# def generate_launch_description():
-#     use_sim_time = LaunchConfiguration('use_sim_time')
-#     slam_params_file = LaunchConfiguration('slam_params_file')
-
-#     declare_use_sim_time_argument = DeclareLaunchArgument(
-#         'use_sim_time',
-#         default_value='true',
-#         description='Use simulation/Gazebo clock')
-#     declare_slam_params_file_cmd = DeclareLaunchArgument(
-#         'slam_params_file',
-#         default_value=os.path.join(get_package_share_directory("slam_toolbox"),
-#                                    'config', 'mapper_params_online_async.yaml'),
-#         description='Full path to the ROS2 parameters file to use for the slam_toolbox node')
-
-#     start_async_slam_toolbox_node = Node(
-#         parameters=[
-#           slam_params_file,
-#           {'use_sim_time': use_sim_time}
-#         ],
-#         package='slam_toolbox',
-#         executable='async_slam_toolbox_node',
-#         name='slam_toolbox',
-#         output='screen')
-
-#     ld = LaunchDescription()
-
-#     ld.add_action(declare_use_sim_time_argument)
-#     ld.add_action(declare_slam_params_file_cmd)
-#     ld.add_action(start_async_slam_toolbox_node)
-
-#     return ld
+            Node(
+                package='rviz2',
+                executable='rviz2',
+                name='rviz2',
+                output='screen',
+                arguments=['-d', rviz_config_path],
+                condition=IfCondition(LaunchConfiguration("rviz")),
+                parameters=[{'use_sim_time': LaunchConfiguration("sim")}]
+            )
+        ])

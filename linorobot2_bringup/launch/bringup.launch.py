@@ -47,18 +47,12 @@ def generate_launch_description():
 
     # ekf namespace configuration
     if robot_ns != "":
-        ekf_param_substitutions = {
-            'map_frame': robot_ns + '_map',
-            'odom_frame': robot_ns + '_odom',
-            'base_link_frame': robot_ns + '_base_footprint',
-            'world_frame': robot_ns + '_odom'
-            }
-
         ekf_config = RewrittenYaml(
-                source_file=ekf_config_path,
-                root_key=robot_ns,
-                param_rewrites=ekf_param_substitutions,
-                convert_types=True)
+            source_file=ekf_config_path,
+            root_key=robot_ns,
+            param_rewrites={},
+            convert_types=True
+        )
     else:
         ekf_config = ekf_config_path
 

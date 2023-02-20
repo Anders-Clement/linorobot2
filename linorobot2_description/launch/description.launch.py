@@ -76,7 +76,7 @@ def generate_launch_description():
             parameters=[
                 {
                     'use_sim_time': LaunchConfiguration('use_sim_time'),
-                    'robot_description': Command(['xacro ', LaunchConfiguration('urdf'), ' prefix:='+robot_ns])
+                    'robot_description': Command(['xacro ', LaunchConfiguration('urdf')])
                 }
             ],
             remappings=[
