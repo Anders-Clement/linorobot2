@@ -22,7 +22,7 @@ from launch_ros.substitutions import FindPackageShare
 from launch_ros.actions import Node
 from nav2_common.launch import RewrittenYaml
 
-MAP_NAME='home' #change to the name of your own map here
+MAP_NAME='C4' #change to the name of your own map here
 
 def generate_launch_description():
     #depth_sensor = os.getenv('LINOROBOT2_DEPTH_SENSOR', '')
