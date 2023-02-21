@@ -33,6 +33,12 @@ def generate_launch_description():
                 os.path.join(get_package_share_directory('linorobot2_bringup'),
                   'launch/bringup.launch.py')
                 )
+        ),
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(
+                os.path.join(get_package_share_directory('spice'),
+                  'launch/robot_spice.launch.py')
+                )
         )
       ]
 )
