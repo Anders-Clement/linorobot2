@@ -28,7 +28,7 @@ def generate_launch_description():
     #depth_sensor = os.getenv('LINOROBOT2_DEPTH_SENSOR', '')
 
     nav2_launch_path = PathJoinSubstitution(
-        [FindPackageShare('nav2_bringup'), 'launch', 'bringup_launch.py']
+        [FindPackageShare('linorobot2_navigation'), 'launch', 'bringup.launch.py']
     )
 
     rviz_config_path = PathJoinSubstitution(
@@ -49,12 +49,8 @@ def generate_launch_description():
 
     if robot_ns != "":
         use_namespace = 'true'
-
-        
     else:
         use_namespace = 'false'
-
-    # print('-------------------', nav2_config, use_namespace)
 
     return LaunchDescription([
         DeclareLaunchArgument(
