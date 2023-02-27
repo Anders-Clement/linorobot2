@@ -20,7 +20,6 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.conditions import IfCondition
 from launch_ros.substitutions import FindPackageShare
 from launch_ros.actions import Node
-from nav2_common.launch import RewrittenYaml
 
 MAP_NAME='C4' #change to the name of your own map here
 
@@ -78,8 +77,9 @@ def generate_launch_description():
                 'use_sim_time': LaunchConfiguration("sim"),
                 'namespace' : robot_ns,
                 'use_namespace' : use_namespace,
-                'use_composition' : 'False',
-                'params_file': nav2_config_path
+                'use_composition' : 'True',
+                'params_file': nav2_config_path,
+                'autostart': 'True'
             }.items()
         ),
 

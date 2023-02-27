@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import os
+import yaml
 
 from ament_index_python.packages import get_package_share_directory
 
@@ -61,6 +62,20 @@ def generate_launch_description():
         root_key=namespace,
         param_rewrites=param_substitutions,
         convert_types=True)
+    
+    configFilepath = os.path.join(
+        get_package_share_directory("linorobot2_navigation"), 
+        'config',
+        'navigation.yaml'
+    )    
+    with open(configFilepath, 'r') as file:
+        params = yaml.safe_load(file)   
+
+    map_file_path = os.path.join(
+        get_package_share_directory("linorobot2_navigation"),
+        'maps',
+        'C4.yaml'
+    )
 
     stdout_linebuf_envvar = SetEnvironmentVariable(
         'RCUTILS_LOGGING_BUFFERED_STREAM', '1')
@@ -147,13 +162,13 @@ def generate_launch_description():
                 package='nav2_map_server',
                 plugin='nav2_map_server::MapServer',
                 name='map_server',
-                parameters=[configured_params],
+                parameters=[params['map_server']['ros__parameters'], {'yaml_filename': map_file_path}],
                 remappings=remappings),
             ComposableNode(
                 package='nav2_amcl',
                 plugin='nav2_amcl::AmclNode',
                 name='amcl',
-                parameters=[configured_params],
+                parameters=[params['amcl']['ros__parameters']],
                 remappings=remappings),
             ComposableNode(
                 package='nav2_lifecycle_manager',
