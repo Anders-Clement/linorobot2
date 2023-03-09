@@ -37,6 +37,7 @@ def generate_launch_description():
     autostart = LaunchConfiguration('autostart')
     params_file = LaunchConfiguration('params_file')
     use_composition = LaunchConfiguration('use_composition')
+    use_global_map = LaunchConfiguration('use_global_map')
     container_name = LaunchConfiguration('container_name')
     use_respawn = LaunchConfiguration('use_respawn')
     log_level = LaunchConfiguration('log_level')
@@ -90,7 +91,8 @@ def generate_launch_description():
         description='Full path to map yaml file to load')
     
     declare_use_global_map_cmd = DeclareLaunchArgument(
-        'use_global_map'
+        'use_global_map',
+        default_value='False'
     )
 
     declare_use_sim_time_cmd = DeclareLaunchArgument(
@@ -124,7 +126,7 @@ def generate_launch_description():
         description='log level')
     
     load_map_server = GroupAction(
-        condition=IfCondition(PythonExpression(['not ', use_composition, ' and ', declare_use_global_map_cmd])),
+        condition=IfCondition(PythonExpression(['not ', use_composition, ' and ', use_global_map])),
         actions=[
             Node(
                 package='nav2_amcl',
@@ -135,7 +137,7 @@ def generate_launch_description():
                 respawn_delay=2.0,
                 parameters=[configured_params],
                 arguments=['--ros-args', '--log-level', log_level],
-                remappings=remappings + [('map', '/map')]),
+                remappings=remappings + [(['/', LaunchConfiguration('namespace'), '/map'], '/map')]),
             Node(
                 package='nav2_lifecycle_manager',
                 executable='lifecycle_manager',
@@ -148,8 +150,8 @@ def generate_launch_description():
         ]
     )
 
-    load_map_server_composable = GroupAction(
-        condition=IfCondition(PythonExpression([use_composition, ' and ', declare_use_global_map_cmd])),
+    load_map_server_composable = LoadComposableNodes(
+        condition=IfCondition(PythonExpression([use_composition, ' and ', use_global_map])),
         target_container=container_name,
         composable_node_descriptions=[
             ComposableNode(
@@ -157,7 +159,8 @@ def generate_launch_description():
                 plugin='nav2_amcl::AmclNode',
                 name='amcl',
                 parameters=[params['amcl']['ros__parameters']],
-                remappings=remappings),
+                remappings=remappings + [(['/', LaunchConfiguration('namespace'), '/map'], '/map'), 
+                                         (['/', LaunchConfiguration('namespace'),'/map_server/get_state'], '/map_server/get_state')]),
             ComposableNode(
                 package='nav2_lifecycle_manager',
                 plugin='nav2_lifecycle_manager::LifecycleManager',
@@ -169,7 +172,7 @@ def generate_launch_description():
     )
 
     load_nodes = GroupAction(
-        condition=IfCondition(PythonExpression(['not ', use_composition, ' and not ', declare_use_global_map_cmd])),
+        condition=IfCondition(PythonExpression(['not ', use_composition, ' and not ', use_global_map])),
         actions=[
             Node(
                 package='nav2_map_server',
@@ -204,7 +207,7 @@ def generate_launch_description():
     )
 
     load_composable_nodes = LoadComposableNodes(
-        condition=IfCondition([use_composition, ' and not ', declare_use_global_map_cmd]),
+        condition=IfCondition(PythonExpression([use_composition, ' and not ', use_global_map])),
         target_container=container_name,
         composable_node_descriptions=[
             ComposableNode(
@@ -249,8 +252,8 @@ def generate_launch_description():
 
     # Add the actions to launch all of the localiztion nodes
     ld.add_action(load_map_server)
-    ld.add_action(load_nodes)
     ld.add_action(load_map_server_composable)
+    ld.add_action(load_nodes)
     ld.add_action(load_composable_nodes)
 
     return ld

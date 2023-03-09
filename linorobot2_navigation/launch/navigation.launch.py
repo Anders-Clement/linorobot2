@@ -72,7 +72,7 @@ def generate_launch_description():
 
         DeclareLaunchArgument(
             name='use_global_map',
-            default_value='false',
+            default_value='True',
             description='Whether a global map server exists on /map'
         ),
 

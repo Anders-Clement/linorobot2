@@ -55,7 +55,8 @@ def generate_launch_description():
     # TODO(orduno) Substitute with `PushNodeRemapping`
     #              https://github.com/ros2/launch_ros/issues/56
     remappings = [('/tf', 'tf'),
-                  ('/tf_static', 'tf_static')]
+                  ('/tf_static', 'tf_static'),
+                  ('/scan', ['/',LaunchConfiguration('namespace'),'/scan'])]
 
     # Create our own temporary YAML files that include substitutions
     param_substitutions = {
@@ -107,7 +108,8 @@ def generate_launch_description():
         description='log level')
     
     declare_use_global_map_cmd = DeclareLaunchArgument(
-        'use_global_map'
+        'use_global_map',
+        default_value='True'
     )
 
     load_nodes = GroupAction(
@@ -121,7 +123,7 @@ def generate_launch_description():
                 respawn_delay=2.0,
                 parameters=[configured_params],
                 arguments=['--ros-args', '--log-level', log_level],
-                remappings=remappings + [('cmd_vel', 'cmd_vel_nav'), ('/scan', ['/',LaunchConfiguration('namespace'),'/scan'])]
+                remappings=remappings + [('cmd_vel', 'cmd_vel_nav')]
             ),
             Node(
                 package='nav2_smoother',
