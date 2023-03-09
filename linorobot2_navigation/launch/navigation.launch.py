@@ -70,6 +70,12 @@ def generate_launch_description():
             description='Navigation map path'
         ),
 
+        DeclareLaunchArgument(
+            name='use_global_map',
+            default_value='false',
+            description='Whether a global map server exists on /map'
+        ),
+
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(nav2_launch_path),
             launch_arguments={
@@ -79,7 +85,8 @@ def generate_launch_description():
                 'use_namespace' : use_namespace,
                 'use_composition' : 'True',
                 'params_file': nav2_config_path,
-                'autostart': 'True'
+                'autostart': 'True',
+                'use_global_map': LaunchConfiguration('use_global_map')
             }.items()
         ),
 

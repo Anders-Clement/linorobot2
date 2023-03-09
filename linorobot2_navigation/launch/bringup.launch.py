@@ -85,6 +85,10 @@ def generate_launch_description():
     declare_map_yaml_cmd = DeclareLaunchArgument(
         'map',
         description='Full path to map yaml file to load')
+    
+    declare_use_global_map_cmd = DeclareLaunchArgument(
+        'use_global_map'
+    )
 
     declare_use_sim_time_cmd = DeclareLaunchArgument(
         'use_sim_time',
@@ -150,7 +154,9 @@ def generate_launch_description():
                               'params_file': params_file,
                               'use_composition': use_composition,
                               'use_respawn': use_respawn,
-                              'container_name': [LaunchConfiguration('namespace'),'/', container_name]}.items()),
+                              'container_name': [LaunchConfiguration('namespace'),'/', container_name],
+                              'use_global_map': LaunchConfiguration('use_global_map')}.items()),
+                              
 
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(os.path.join(launch_dir, 'nav_stack.launch.py')),
@@ -160,7 +166,8 @@ def generate_launch_description():
                               'params_file': params_file,
                               'use_composition': use_composition,
                               'use_respawn': use_respawn,
-                              'container_name': [LaunchConfiguration('namespace'),'/', container_name]}.items()),
+                              'container_name': [LaunchConfiguration('namespace'),'/', container_name],
+                              'use_global_map': LaunchConfiguration('use_global_map')}.items()),
     ])
 
     # Create the launch description and populate
@@ -174,6 +181,7 @@ def generate_launch_description():
     ld.add_action(declare_use_namespace_cmd)
     ld.add_action(declare_slam_cmd)
     ld.add_action(declare_map_yaml_cmd)
+    ld.add_action(declare_use_global_map_cmd)
     ld.add_action(declare_use_sim_time_cmd)
     ld.add_action(declare_params_file_cmd)
     ld.add_action(declare_autostart_cmd)
