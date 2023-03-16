@@ -22,25 +22,25 @@ from launch_ros.substitutions import FindPackageShare
 from launch_ros.actions import Node
 from nav2_common.launch import RewrittenYaml
 
-MAP_NAME='C4' #change to the name of your own map here
 
 def generate_launch_description():
     #depth_sensor = os.getenv('LINOROBOT2_DEPTH_SENSOR', '')
 
+    map_yaml_file = LaunchConfiguration('map')
+
     nav2_launch_path = PathJoinSubstitution(
-        [FindPackageShare('linorobot2_navigation'), 'launch', 'bringup.launch.py']
+        [FindPackageShare('linorobot2_navigation'),
+         'launch', 'bringup.launch.py']
     )
 
     rviz_config_path = PathJoinSubstitution(
-        [FindPackageShare('linorobot2_navigation'), 'rviz', 'linorobot2_navigation.rviz']
-    )
-
-    default_map_path = PathJoinSubstitution(
-        [FindPackageShare('linorobot2_navigation'), 'maps', f'{MAP_NAME}.yaml']
+        [FindPackageShare('linorobot2_navigation'), 'rviz',
+         'linorobot2_navigation.rviz']
     )
 
     nav2_config_path = PathJoinSubstitution(
-        [FindPackageShare('linorobot2_navigation'), 'config', 'navigation.yaml']
+        [FindPackageShare('linorobot2_navigation'),
+         'config', 'navigation.yaml']
     )
 
     robot_ns = os.environ.get('ROBOT_NAMESPACE')
@@ -54,31 +54,25 @@ def generate_launch_description():
 
     return LaunchDescription([
         DeclareLaunchArgument(
-            name='sim', 
+            name='sim',
             default_value='false',
             description='Enable use_sime_time to true'
         ),
 
         DeclareLaunchArgument(
-            name='rviz', 
+            name='rviz',
             default_value='false',
             description='Run rviz'
-        ),
-
-       DeclareLaunchArgument(
-            name='map', 
-            default_value=default_map_path,
-            description='Navigation map path'
         ),
 
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(nav2_launch_path),
             launch_arguments={
-                'map': LaunchConfiguration("map"),
+                'map': map_yaml_file,
                 'use_sim_time': LaunchConfiguration("sim"),
-                'namespace' : robot_ns,
-                'use_namespace' : use_namespace,
-                'use_composition' : 'False',
+                'namespace': robot_ns,
+                'use_namespace': use_namespace,
+                'use_composition': 'False',
                 'params_file': nav2_config_path
             }.items()
         ),
