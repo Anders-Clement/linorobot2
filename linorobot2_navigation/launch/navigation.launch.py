@@ -13,24 +13,21 @@
 # limitations under the License.
 
 import os
-from launch import LaunchDescription, LaunchContext
+from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.conditions import IfCondition
 from launch_ros.substitutions import FindPackageShare
 from launch_ros.actions import Node
-from nav2_common.launch import RewrittenYaml
-
 
 def generate_launch_description():
-    #depth_sensor = os.getenv('LINOROBOT2_DEPTH_SENSOR', '')
 
     map_yaml_file = LaunchConfiguration('map')
 
     nav2_launch_path = PathJoinSubstitution(
         [FindPackageShare('linorobot2_navigation'),
-         'launch', 'bringup.launch.py']
+         'launch', 'nav_bringup.launch.py']
     )
 
     rviz_config_path = PathJoinSubstitution(

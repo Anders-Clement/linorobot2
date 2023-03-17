@@ -27,6 +27,7 @@ from launch.actions import GroupAction
 from launch_ros.actions import PushRosNamespace
 
 def generate_launch_description():
+    
     slam_config_path = PathJoinSubstitution(
         [FindPackageShare('linorobot2_navigation'), 'config', 'slam.yaml']
     )
@@ -34,12 +35,6 @@ def generate_launch_description():
     rviz_config_path = PathJoinSubstitution(
         [FindPackageShare('linorobot2_navigation'), 'rviz', 'linorobot2_slam.rviz']
     )
-    
-    # lc = LaunchContext()
-    # ros_distro = EnvironmentVariable('ROS_DISTRO')
-    # slam_param_name = 'slam_params_file'
-    # if ros_distro.perform(lc) == 'foxy': 
-    #     slam_param_name = 'params_file'
 
     robot_ns = os.getenv('ROBOT_NAMESPACE')
     if robot_ns is None:
@@ -60,20 +55,7 @@ def generate_launch_description():
                 root_key=robot_ns,
                 param_rewrites=slam_param_substitutions,
                 convert_types=True)
-        ns_slam=GroupAction(actions=[
-            PushRosNamespace(robot_ns),
-            Node(
-                parameters=[
-                    slam_config,
-                    {'use_sim_time': LaunchConfiguration("sim")}
-                ],
-                package='slam_toolbox',
-                executable='async_slam_toolbox_node',
-                name='slam_toolbox',
-                output='screen',
-                remappings=remappings
-            )
-        ])
+
         return LaunchDescription(
             [
                 DeclareLaunchArgument(
@@ -87,7 +69,20 @@ def generate_launch_description():
                     default_value='false',
                     description='Run rviz'
                 ),
-                ns_slam
+                GroupAction(actions=[
+                    PushRosNamespace(robot_ns),
+                    Node(
+                        parameters=[
+                            slam_config,
+                            {'use_sim_time': LaunchConfiguration("sim")}
+                        ],
+                        package='slam_toolbox',
+                        executable='async_slam_toolbox_node',
+                        name='slam_toolbox',
+                        output='screen',
+                        remappings=remappings
+                    )
+                ])
             ])
     else:
         slam_config = slam_config_path

@@ -18,8 +18,7 @@ from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
 from launch.actions import (DeclareLaunchArgument, GroupAction,
-                            IncludeLaunchDescription, SetEnvironmentVariable,
-                            OpaqueFunction)
+                            IncludeLaunchDescription, SetEnvironmentVariable)
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PythonExpression
@@ -28,9 +27,9 @@ from launch_ros.actions import PushRosNamespace
 from nav2_common.launch import RewrittenYaml
 
 
-def launch_setup(context, *args, **kwargs):
+def generate_launch_description():
     # Get the launch directory
-    bringup_dir = get_package_share_directory('nav2_bringup')
+    bringup_dir = get_package_share_directory('linorobot2_navigation')
     launch_dir = os.path.join(bringup_dir, 'launch')
 
     # Create the launch configuration variables
@@ -51,8 +50,8 @@ def launch_setup(context, *args, **kwargs):
     # https://github.com/ros/robot_state_publisher/pull/30
     # TODO(orduno) Substitute with `PushNodeRemapping`
     #              https://github.com/ros2/launch_ros/issues/56
-    remappings = [('/'+namespace.perform(context)+'/tf', '/tf'),
-                  ('/'+namespace.perform(context)+'/tf_static', '/tf_static')]
+    remappings = [('/tf', 'tf'),
+                  ('/tf_static', 'tf_static')]
 
     # Create our own temporary YAML files that include substitutions
     param_substitutions = {
@@ -130,7 +129,7 @@ def launch_setup(context, *args, **kwargs):
             output='screen'),
 
         IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(os.path.join(launch_dir, 'slam_launch.py')),
+            PythonLaunchDescriptionSource(os.path.join(launch_dir, 'slam.launch.py')),
             condition=IfCondition(slam),
             launch_arguments={'namespace': namespace,
                               'use_sim_time': use_sim_time,
@@ -140,7 +139,7 @@ def launch_setup(context, *args, **kwargs):
 
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(os.path.join(launch_dir,
-                                                       'localization_launch.py')),
+                                                       'nav_localization.launch.py')),
             condition=IfCondition(PythonExpression(['not ', slam])),
             launch_arguments={'namespace': namespace,
                               'map': map_yaml_file,
@@ -152,8 +151,7 @@ def launch_setup(context, *args, **kwargs):
                               'container_name': 'nav2_container'}.items()),
 
         IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(
-                os.path.join(get_package_share_directory('linorobot2_navigation'), 'launch/nav_second_bringup.launch.py')),
+            PythonLaunchDescriptionSource(os.path.join(launch_dir, 'nav_stack.launch.py')),
             launch_arguments={'namespace': namespace,
                               'use_sim_time': use_sim_time,
                               'autostart': autostart,
@@ -163,45 +161,24 @@ def launch_setup(context, *args, **kwargs):
                               'container_name': 'nav2_container'}.items()),
     ])
 
-    return [
-        stdout_linebuf_envvar,
-        declare_namespace_cmd,
-        declare_use_namespace_cmd,
-        declare_slam_cmd,
-        declare_map_yaml_cmd,
-        declare_use_sim_time_cmd,
-        declare_params_file_cmd,
-        declare_autostart_cmd,
-        declare_use_composition_cmd,
-        declare_use_respawn_cmd,
-        declare_log_level_cmd,
-        bringup_cmd_group
-    ]
+    # Create the launch description and populate
+    ld = LaunchDescription()
 
-    # # Create the launch description and populate
-    # ld = LaunchDescription()
+    # Set environment variables
+    ld.add_action(stdout_linebuf_envvar)
 
-    # # Set environment variables
-    # ld.add_action(stdout_linebuf_envvar)
+    # Declare the launch options
+    ld.add_action(declare_namespace_cmd)
+    ld.add_action(declare_use_namespace_cmd)
+    ld.add_action(declare_slam_cmd)
+    ld.add_action(declare_map_yaml_cmd)
+    ld.add_action(declare_use_sim_time_cmd)
+    ld.add_action(declare_params_file_cmd)
+    ld.add_action(declare_autostart_cmd)
+    ld.add_action(declare_use_composition_cmd)
+    ld.add_action(declare_use_respawn_cmd)
+    ld.add_action(declare_log_level_cmd)
 
-    # # Declare the launch options
-    # ld.add_action(declare_namespace_cmd)
-    # ld.add_action(declare_use_namespace_cmd)
-    # ld.add_action(declare_slam_cmd)
-    # ld.add_action(declare_map_yaml_cmd)
-    # ld.add_action(declare_use_sim_time_cmd)
-    # ld.add_action(declare_params_file_cmd)
-    # ld.add_action(declare_autostart_cmd)
-    # ld.add_action(declare_use_composition_cmd)
-    # ld.add_action(declare_use_respawn_cmd)
-    # ld.add_action(declare_log_level_cmd)
-
-    # # Add the actions to launch all of the navigation nodes
-    # ld.add_action(bringup_cmd_group)
-
-    # return ld
-
-def generate_launch_description():    
-    return LaunchDescription([
-        OpaqueFunction(function = launch_setup)
-        ])
+    # Add the actions to launch all of the navigation nodes
+    ld.add_action(bringup_cmd_group)
+    return ld
