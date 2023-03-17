@@ -21,7 +21,7 @@ from launch.actions import (DeclareLaunchArgument, GroupAction,
                             IncludeLaunchDescription, SetEnvironmentVariable)
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration, PythonExpression
+from launch.substitutions import LaunchConfiguration, PythonExpression, TextSubstitution
 from launch_ros.actions import Node
 from launch_ros.actions import PushRosNamespace
 from nav2_common.launch import RewrittenYaml
@@ -51,7 +51,8 @@ def generate_launch_description():
     # TODO(orduno) Substitute with `PushNodeRemapping`
     #              https://github.com/ros2/launch_ros/issues/56
     remappings = [('/tf', 'tf'),
-                  ('/tf_static', 'tf_static')]
+                  ('/tf_static', 'tf_static'),
+                  ('/scan', ['/',LaunchConfiguration('namespace'),'/scan'])]
 
     # Create our own temporary YAML files that include substitutions
     param_substitutions = {
@@ -111,6 +112,8 @@ def generate_launch_description():
     declare_log_level_cmd = DeclareLaunchArgument(
         'log_level', default_value='info',
         description='log level')
+    
+    container_name = TextSubstitution(text='nav2_container')
 
     # Specify the actions
     bringup_cmd_group = GroupAction([
@@ -120,7 +123,7 @@ def generate_launch_description():
 
         Node(
             condition=IfCondition(use_composition),
-            name='nav2_container',
+            name=container_name,
             package='rclcpp_components',
             executable='component_container_isolated',
             parameters=[configured_params, {'autostart': autostart}],
@@ -148,7 +151,7 @@ def generate_launch_description():
                               'params_file': params_file,
                               'use_composition': use_composition,
                               'use_respawn': use_respawn,
-                              'container_name': 'nav2_container'}.items()),
+                              'container_name': [LaunchConfiguration('namespace'),'/', container_name]}.items()),
 
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(os.path.join(launch_dir, 'nav_stack.launch.py')),
@@ -158,7 +161,7 @@ def generate_launch_description():
                               'params_file': params_file,
                               'use_composition': use_composition,
                               'use_respawn': use_respawn,
-                              'container_name': 'nav2_container'}.items()),
+                              'container_name': [LaunchConfiguration('namespace'),'/', container_name]}.items()),
     ])
 
     # Create the launch description and populate

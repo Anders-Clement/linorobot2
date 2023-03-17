@@ -13,13 +13,14 @@
 # limitations under the License.
 
 import os
+import yaml
 
 from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, GroupAction, SetEnvironmentVariable
 from launch.conditions import IfCondition
-from launch.substitutions import LaunchConfiguration, PythonExpression, TextSubstitution
+from launch.substitutions import LaunchConfiguration, PythonExpression
 from launch_ros.actions import LoadComposableNodes
 from launch_ros.actions import Node
 from launch_ros.descriptions import ComposableNode
@@ -54,7 +55,8 @@ def generate_launch_description():
     # TODO(orduno) Substitute with `PushNodeRemapping`
     #              https://github.com/ros2/launch_ros/issues/56
     remappings = [('/tf', 'tf'),
-                  ('/tf_static', 'tf_static')]
+                  ('/tf_static', 'tf_static'),
+                  ('/scan', ['/',LaunchConfiguration('namespace'),'/scan'])]
 
     # Create our own temporary YAML files that include substitutions
     param_substitutions = {
@@ -116,7 +118,7 @@ def generate_launch_description():
                 respawn_delay=2.0,
                 parameters=[configured_params],
                 arguments=['--ros-args', '--log-level', log_level],
-                remappings=remappings + [('cmd_vel', 'cmd_vel_nav'), ('/scan', ['/',LaunchConfiguration('namespace'),'/scan'])]
+                remappings=remappings + [('cmd_vel', 'cmd_vel_nav')]
             ),
             Node(
                 package='nav2_smoother',
@@ -191,6 +193,14 @@ def generate_launch_description():
         ]
     )
 
+    configFilepath = os.path.join(
+        get_package_share_directory("linorobot2_navigation"), 
+        'config',
+        'navigation.yaml'
+    )    
+    with open(configFilepath, 'r') as file:
+        params = yaml.safe_load(file)   
+
     load_composable_nodes = LoadComposableNodes(
         condition=IfCondition(use_composition),
         target_container=container_name,
@@ -199,43 +209,46 @@ def generate_launch_description():
                 package='nav2_controller',
                 plugin='nav2_controller::ControllerServer',
                 name='controller_server',
-                parameters=[configured_params],
+                parameters=[params['controller_server']['ros__parameters']],
                 remappings=remappings + [('cmd_vel', 'cmd_vel_nav')]),
             ComposableNode(
                 package='nav2_smoother',
                 plugin='nav2_smoother::SmootherServer',
                 name='smoother_server',
-                parameters=[configured_params],
+                # commented out, since no parameters are defined for this node in the config file
+                #parameters=[params['smoother_server']['ros__parameters']],
                 remappings=remappings),
             ComposableNode(
                 package='nav2_planner',
                 plugin='nav2_planner::PlannerServer',
                 name='planner_server',
-                parameters=[configured_params],
+                parameters=[params['planner_server']['ros__parameters']],
                 remappings=remappings),
             ComposableNode(
                 package='nav2_behaviors',
                 plugin='behavior_server::BehaviorServer',
                 name='behavior_server',
-                parameters=[configured_params],
+                # commented out, since no parameters are defined for this node in the config file
+                #parameters=[params['behavior_server']['ros__parameters']],
                 remappings=remappings),
             ComposableNode(
                 package='nav2_bt_navigator',
                 plugin='nav2_bt_navigator::BtNavigator',
                 name='bt_navigator',
-                parameters=[configured_params],
+                parameters=[params['bt_navigator']['ros__parameters']],
                 remappings=remappings),
             ComposableNode(
                 package='nav2_waypoint_follower',
                 plugin='nav2_waypoint_follower::WaypointFollower',
                 name='waypoint_follower',
-                parameters=[configured_params],
+                parameters=[params['waypoint_follower']['ros__parameters']],
                 remappings=remappings),
             ComposableNode(
                 package='nav2_velocity_smoother',
                 plugin='nav2_velocity_smoother::VelocitySmoother',
                 name='velocity_smoother',
-                parameters=[configured_params],
+                # commented out, since no parameters are defined for this node in the config file
+                #parameters=[params['velocity_smoother']['ros__parameters']],
                 remappings=remappings +
                            [('cmd_vel', 'cmd_vel_nav'), ('cmd_vel_smoothed', 'cmd_vel')]),
             ComposableNode(
