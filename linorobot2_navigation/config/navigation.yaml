@@ -67,6 +67,7 @@ bt_navigator:
     enable_groot_monitoring: True
     groot_zmq_publisher_port: 1666
     groot_zmq_server_port: 1667
+    default_bt_xml_filename: "/P10/src/linorobot2/linorobot2_navigation/config/navigate_to_pose_and_pause_near_goal-obstacle_bt.xml"
     plugin_lib_names:
     - nav2_compute_path_to_pose_action_bt_node
     - nav2_compute_path_through_poses_action_bt_node
