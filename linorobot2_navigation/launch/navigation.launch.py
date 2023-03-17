@@ -64,6 +64,14 @@ def generate_launch_description():
             description='Run rviz'
         ),
 
+        DeclareLaunchArgument(
+            name='map',
+            default_value=PathJoinSubstitution(
+                [FindPackageShare('linorobot2_navigation'), 'maps', 'C4.yaml']
+            ),
+            description='Map yaml file'
+        ),
+
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(nav2_launch_path),
             launch_arguments={
